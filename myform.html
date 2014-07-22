@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular.min.js">
+    </script>
+</head>
+
+<body ng-app="myapp">
+<div ng-controller="MyController" ng-init="states=['CA', 'NV', 'WA', 'AZ']" >
+    <form ng-submit="registeruser()">
+        First name  <input type="text" ng-model="myForm.firstName" required>  <br/>
+        Last name <input type="text"  ng-model="myForm.lastName" required>  <br/>
+        Address <input type="text"  ng-model="myForm.address" required>  <br/>
+        City <input type="text"  ng-model="myForm.city" required>  <br/>
+        State
+            <select ng-model="myForm.state" required>
+                <option data-ng-repeat="st in states">{{st}}</option>
+            </select><br />
+        Zipcode <input type="text"  ng-model="myForm.zipcode" required>  <br/><br />
+        <input type="submit" value="Register" class="btn btn-primary"/>
+    </form><br /><br />
+    <div>
+        <!--{{myForm.firstName}} {{myForm.lastName}}-->
+        <!--{{myForm.address}} {{myForm.city}} {{myForm.state}} {{myForm.zipcode}}-->
+    </div>
+
+    <!--<div data-ng-repeat="user in allUsers">-->
+        <!--{{myForm.firstName}} {{myForm.lastName}}-->
+        <!--{{myForm.address}} {{myForm.city}} {{myForm.state}} {{myForm.zipcode}}-->
+
+    <!--</div>-->
+
+    <table class="table table-condensed table-hover table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zipcode</th>
+        </tr>
+
+        </thead>
+        <!--table header-->
+        <tbody>
+        <tr data-ng-repeat="newUser in allUsers">
+            <td><a href="#">{{newUser.firstName}}</a></td>
+            <td>{{newUser.lastName}}</td>
+            <td>{{newUser.address}}</td>
+            <td>{{newUser.city}}</td>
+            <td>{{newUser.state}}</td>
+            <td>{{newUser.zipcode}}</td>
+        </tr>
+        </tbody>
+
+    </table>
+    <!--{{allUsers[0]}}-->
+    <!--{{allUsers[1]}}-->
+    <!--{{allUsers[2]}}-->
+    <!--{{allUsers[3]}}-->
+    <!--{{allUsers[4]}}-->
+
+<script>
+    angular.module("myapp", [])
+            .controller("MyController", function ($scope) {
+                $scope.allUsers = [];
+                $scope.myForm = {};
+                $scope.myForm.firstName = "Ben";
+                $scope.myForm.lastName = "Halverson";
+                $scope.myForm.address = "123 abc";
+                $scope.myForm.city = "San Jose";
+                $scope.myForm.state = "CA";
+                $scope.myForm.zipcode = "95124";
+                //function to register a user
+                $scope.registeruser = function () {
+//                    console.log("First Name = " + $scope.myForm.firstName);
+//                    console.log("Last Name = " + $scope.myForm.lastName);
+//                    console.log("Address = " + $scope.myForm.address);
+//                    console.log("City = " + $scope.myForm.city);
+//                    console.log("State = " + $scope.myForm.state);
+//                    console.log("Zipcode = " + $scope.myForm.zipcode);
+//console.log("fname = " + user.firstName + " lname = " + user.lastName);
+//console.log("fname = " + $scope.myForm.firstName + " lname = " + $scope.myForm.lastName);
+
+                    //check to see if the first and last name are the same
+                    //and adds a new user if no duplicates are found
+                    if($scope.allUsers.length > 0) {
+                        console.log("TOP OF LOOP");
+                        var user, foundpos = -1;
+                        for (var i = 0; i < $scope.allUsers.length; i++) {
+                            user = $scope.allUsers[i];
+
+                            if ((user.firstName == $scope.myForm.firstName ) &&
+                                    (user.lastName == $scope.myForm.lastName )) {
+
+                                foundpos = i;
+                                break;
+                            }
+                        }
+
+                        if(foundpos >= 0)
+                        {
+                            alert("No duplicates!");
+                        }
+                        else {
+                                console.log("adding new user");
+                            //create a new user object
+                            var newUser = {
+                                "firstName": $scope.myForm.firstName,
+                                "lastName": $scope.myForm.lastName,
+                                "address": $scope.myForm.address,
+                                "city": $scope.myForm.city,
+                                "state": $scope.myForm.state,
+                                "zipcode": $scope.myForm.zipcode
+                            };
+                            console.log("new user : " + JSON.stringify(newUser));
+
+                            $scope.allUsers.push(newUser);
+                                console.log("user count = " + $scope.allUsers.length);
+                        }
+                    }
+                    else {
+                        //create a new user object
+                            var newUser = {
+                                "firstName": $scope.myForm.firstName,
+                                "lastName": $scope.myForm.lastName,
+                                "address": $scope.myForm.address,
+                                "city": $scope.myForm.city,
+                                "state": $scope.myForm.state,
+                                "zipcode": $scope.myForm.zipcode
+                            };
+                            console.log("new user : " + JSON.stringify(newUser));
+
+                            $scope.allUsers.push(newUser);
+                    }
+
+//                    console.log("user count =" + $scope.allUsers.length);
+                };
+
+                //reset everything
+
+
+            });
+</script>
+
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
