@@ -1,4 +1,5 @@
-simpleangularform
+A Simple Angular Form 
 =================
 
-A simple form using angular.js
+* Bootstrap 3.2
+* Angular.js 1.2.17
