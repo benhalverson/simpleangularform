@@ -1,0 +1,104 @@
+<!DOCTYPE html> 
+<html ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <title>Dynamically Create Table Data</title>
+  <link rel="stylesheet"
+    href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script
+    src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular.min.js"></script>
+</head>
+
+ <body ng-controller="CompanyCtrl">
+  <!-- THIS FORM IS FOR ADDING A NEW COMPANY -->
+  <form class="form-horizontal" role="form" ng-submit="addRow()">
+    <div class="form-group">
+       <label class="col-md-2 control-label">Name</label>
+       <div class="col-md-4">
+          <input type="text" placeholder="Company Name" class="form-control" name="name"
+                 ng-model="name" required />
+       </div>
+    </div>
+
+    <div class="form-group">
+       <label class="col-md-2 control-label">Employees</label>
+       <div class="col-md-4">
+          <input type="text" placeholder="Company Size" class="form-control" name="employees"
+                 ng-model="employees" required />
+       </div>
+    </div>
+
+    <div class="form-group">
+       <label class="col-md-2 control-label">HQ</label>
+       <div class="col-md-4">
+          <input type="text" placeholder="Headquarters" class="form-control" name="hq"
+                 ng-model="hq" required />
+       </div>
+    </div>
+
+    <div class="form-group">                        
+       <div style="padding-left:110px">
+         <input type="submit" value="Submit" class="btn btn-primary"/>
+       </div>
+    </div>
+  </form>
+
+  <form ng-submit="toggleState()">
+    <div> 
+      <input type="submit" value="Toggle Display" class="btn btn-primary"/>
+    </div>
+  </form>
+
+  <!-- THIS TABLE USES ng-repeat TO DISPLAY DETAILS OF EVERY COMPANY -->
+   <div class="ng-{{state}}" ng-click="toggleState()">
+     <table class="table">
+       <tr><th>Name</th><th>Employees</th><th>HQ</th></tr>
+  
+       <tr ng-repeat="company in companies">
+          <td>{{company.name}}</td>
+          <td>{{company.employees}}</td>
+          <td>{{company.hq}}</td>
+       </tr>
+     </table>
+   </div>
+  
+   <script>
+    var myApp = angular.module("myApp", []);
+
+    myApp.controller("CompanyCtrl", function($scope) {
+        $scope.clickCount=0; 
+        $scope.states = ["show", "hide"];
+        $scope.state = $scope.states[$scope.clickCount];
+
+        $scope.toggleState = function() {
+          $scope.state = $scope.states[(++$scope.clickCount)%2];
+var index = $scope.clickCount;
+console.log("index = "+index);
+        };
+
+        // "SEED DATA" FOR LIST OF COMPANIES 
+        $scope.companies = [
+               {'name':'ABC', 'employees': 5000, 'hq': 'SF'},
+               {'name':'DEF', 'employees': 1000, 'hq': 'NY'},
+               {'name':'GHI', 'employees': 2000, 'hq': 'SF'},
+               {'name':'JKL', 'employees': 9000, 'hq': 'LA'},
+        ];
+    
+      // APPEND NEW COMPANY TO ARRAY OF COMPANIES 
+      $scope.addRow = function(){    
+        $scope.companies.push({'name':$scope.name,
+                               'employees':$scope.employees,
+                               'hq':$scope.hq});
+        $scope.name='';
+        $scope.employees='';
+        $scope.hq='';
+      };
+    });
+   </script>
+ </body>
+</html>
+

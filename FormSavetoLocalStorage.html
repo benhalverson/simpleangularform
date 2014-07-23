@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular.min.js">
+    </script>
+</head>
+
+<body ng-app="myapp">
+<div ng-controller="MyController" ng-init="states=['CA', 'NV', 'WA', 'AZ']">
+    <form ng-submit="registeruser()">
+        First name <input type="text" ng-model="myForm.firstName" required> <br/>
+        Last name <input type="text" ng-model="myForm.lastName" required> <br/>
+        Address <input type="text" ng-model="myForm.address" required> <br/>
+        City <input type="text" ng-model="myForm.city" required> <br/>
+        State
+        <select ng-model="myForm.state" required>
+            <option data-ng-repeat="st in states">{{st}}</option>
+        </select><br/>
+        Zipcode <input type="text" ng-model="myForm.zipcode" required> <br/><br/>
+        <input type="submit" value="Register" class="btn btn-primary"/>
+    </form>
+    <br/><br/>
+
+    <div>
+        <!--{{myForm.firstName}} {{myForm.lastName}}-->
+        <!--{{myForm.address}} {{myForm.city}} {{myForm.state}} {{myForm.zipcode}}-->
+    </div>
+
+    <!--<div data-ng-repeat="user in allUsers">-->
+    <!--{{myForm.firstName}} {{myForm.lastName}}-->
+    <!--{{myForm.address}} {{myForm.city}} {{myForm.state}} {{myForm.zipcode}}-->
+
+    <!--</div>-->
+
+    <table class="table table-condensed table-hover table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zipcode</th>
+        </tr>
+
+        </thead>
+        <!--table header-->
+        <tbody>
+        <tr data-ng-repeat="newUser in allUsers">
+            <td><a href="#">{{newUser.firstName}}</a></td>
+            <td>{{newUser.lastName}}</td>
+            <td>{{newUser.address}}</td>
+            <td>{{newUser.city}}</td>
+            <td>{{newUser.state}}</td>
+            <td>{{newUser.zipcode}}</td>
+        </tr>
+        </tbody>
+
+    </table>
+    <script>
+        angular.module("myapp", [])
+                .controller("MyController", function ($scope) {
+                    $scope.allUsers = [];
+                    $scope.myForm = {};
+                    $scope.myForm.firstName = "Ben";
+                    $scope.myForm.lastName = "Halverson";
+                    $scope.myForm.address = "123 abc";
+                    $scope.myForm.city = "San Jose";
+                    $scope.myForm.state = "CA";
+                    $scope.myForm.zipcode = "95124";
+                    var prefix = "ang_ls_reg_user", newUserKey = "";
+
+                    function findUsersInLocalStorage() {
+                        var item, key, i = -1, localStorageUser;
+                        var localStorageUserArray = [];
+
+                        console.log("top of findUsersInLocalStorage");
+                        itemCount = localStorage.length;
+
+                        while (++i < itemCount) {
+                          // retrieve the value of the current key
+                          try {
+                            key = localStorage.key(i);
+                            console.log("key =" + key);
+
+                            if (key.indexOf(prefix) == 0) {
+                                localStorageUser = localStorage.getItem(key);
+                                localStorageUserArray.push(localStorageUser);
+                                console.log("3LS user = " +  + JSON.stringify(localStorageUser));
+                            } else {
+                                console.log("No matching user: " + JSON.stringify(localStorageUser))
+                            }
+                          } catch (err){
+                                Console.log("7error occurred using indexOf: " + err);
+                            }
+                        }
+                    }
+
+                    $scope.registeruser = function () {
+                        //check to see if the first and last name are the same
+                        //and adds a new user if no duplicates are found
+                        if ($scope.allUsers.length > 0) {
+                            console.log("REGISTERUSER: TOP OF LOOP");
+                            var user, foundpos = -1;
+
+                            // iterate through the array 'allUsers' to check if
+                            // a user with the same firstname and lastname exists
+                            for (var i = 0; i < $scope.allUsers.length; i++) {
+                                user = $scope.allUsers[i];
+
+                                if ((user.firstName == $scope.myForm.firstName ) &&
+                                    (user.lastName == $scope.myForm.lastName )) {
+                                    foundpos = i;
+                                    break;
+                                }
+                            }
+
+                            if (foundpos >= 0) {
+                                alert("No duplicates!");
+                            }
+                            else {
+                                //create a new user object and append to JS array
+                                var newUser = {
+                                    "firstName": $scope.myForm.firstName,
+                                    "lastName": $scope.myForm.lastName,
+                                    "address": $scope.myForm.address,
+                                    "city": $scope.myForm.city,
+                                    "state": $scope.myForm.state,
+                                    "zipcode": $scope.myForm.zipcode
+                                };
+
+                                console.log("5new user (in else): " + JSON.stringify(newUser));
+
+                                // append newUser to 'allUsers' in-memory array
+                                $scope.allUsers.push(newUser);
+                                console.log("user count = " + $scope.allUsers.length);
+
+                                // find registered users in local storage (if any)
+                                findUsersInLocalStorage();
+
+                                // construct user-specific key
+                                newUserKey = prefix + "_" + $scope.myForm.firstName + "_" + $scope.myForm.lastName;
+                                console.log("2New user key = " + newUserKey);
+
+                                // save newly registered user in local storage
+                                localStorage.setItem(newUserKey, newUser);
+                            }
+                        }
+                        else {
+                            //create a new user object
+                            var newUser = {
+                                "firstName": $scope.myForm.firstName,
+                                "lastName": $scope.myForm.lastName,
+                                "address": $scope.myForm.address,
+                                "city": $scope.myForm.city,
+                                "state": $scope.myForm.state,
+                                "zipcode": $scope.myForm.zipcode
+                            };
+
+                            console.log("4new user (in else): " + JSON.stringify(newUser));
+
+                            $scope.allUsers.push(newUser);
+
+                            // construct user-specific key
+                            newUserKey = prefix + "_" + $scope.myForm.firstName + "_" + $scope.myForm.lastName;
+                            console.log("3New user key = " + newUserKey);
+
+                            // save newly registered user in local storage
+                            localStorage.setItem(newUserKey, newUser);
+                        }
+                    };
+                });
+    </script>
+
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+

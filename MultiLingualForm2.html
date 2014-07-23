@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+ <meta charset="utf-8" />
+ <title>Our Multi-Lingual Dictionary</title>
+ <link rel="stylesheet" media="screen" href="MultiLingualForm2.css" />
+
+<script> 
+ function displayItem() {
+    var dictionary  = document.forms["dictionary"];
+    var english     = dictionary.english.value;
+    var storageItem = localStorage.getItem(english);
+
+    var splitItem   = item.split(":");
+    var english     = splitItem[0];
+    var japanese    = splitItem[1];
+    var spanish     = splitItem[2];
+    var french      = splitItem[3];
+    var italian     = splitItem[4];
+
+    dictionary.english.value  = english;
+    dictionary.japanese.value = japanese;
+    dictionary.spanish.value  = spanish;
+    dictionary.french.value   = french;
+    dictionary.italian.value  = italian;
+ }
+
+ function addWord() {
+    var dictionary = document.forms["dictionary"];
+
+    var english    = dictionary.english.value;
+    var japanese   = dictionary.japanese.value;
+    var spanish    = dictionary.spanish.value;
+    var french     = dictionary.french.value;
+    var italian    = dictionary.italian.value;
+    var incomplete = 0;
+
+    var concatenated =  english + ":" + japanese + ":" +
+                        spanish + ":" + french + ":" +
+                        italian;
+
+    if(english == ""||japanese == ""||spanish == ""||
+       french == ""||italian == "")  
+    {
+       ++incomplete; 
+console.log("Skipping incomplete/empty row!");
+       return;
+    }
+
+    try {
+       localStorage.setItem(english, concatenated);
+       alert("added new word: "+ concatenated);
+       clearFields();
+
+       // append new words to dropdown list
+       option = new Option( english );
+       wordList.options[wordList.length] = option;
+    } catch (e) {
+       if (e == QUOTA_EXCEEDED_ERR) {
+          alert("Local Storage Quota exceeded");
+          // you can clear local storage here:
+          //clearLocalStorage();
+       }
+    }
+ }
+
+ function clearFields() {
+    var dictionary = document.forms["dictionary"];
+
+    dictionary.english.value  = "";
+    dictionary.japanese.value = "";
+    dictionary.spanish.value  = "";
+    dictionary.french.value   = "";
+    dictionary.italian.value  = "";
+ }
+
+ function clearLocalStorage() {
+   localStorage.clear();
+   populateDropDownList();
+ }
+
+ // remove the options from the list
+ function removeItemsFromDropDownList() {
+   while ( wordList.options.length ) wordList.options[0] = null;
+ }
+
+ function createSampleData() {
+   removeItemsFromDropDownList();
+ //clearLocalStorage();
+
+   localStorage.setItem("eat", "eat:taberu:comer:manger:mangiare");
+   localStorage.setItem("go",  "go:iku:andar:aller:andare");
+   localStorage.setItem("buy", "buy:kau:comprar:acheter:comprare");
+ }
+
+ function populateDropDownList() {
+   // the length property contains the item count in the storage
+   var i = -1, key, itemCount, items = {};
+
+   createSampleData();
+   itemCount = localStorage.length;
+
+// option = new Option( "eat:taberu:comer:manger:mangiare" );
+// wordList.options[wordList.length] = option;
+
+
+   while ( ++i < itemCount ) {
+      // retrieve the value of the current key
+      key = localStorage.key( i );
+
+      // retrieve the value of the current item
+      items[key] = localStorage.getItem( key );
+
+      option = new Option( key );
+
+      // Append to existing options
+      wordList.options[wordList.length] = option;
+   }
+
+   // Ensure option 0 is selected
+   wordList.selectedIndex = 0;
+ }
+
+ function showWordDetails() {
+    var selectedWord = wordList[wordList.selectedIndex]; 
+  //alert('word: '+selectedWord.value);
+
+    // get the word from local storage 
+    var storageItem = localStorage.getItem(selectedWord.value);
+  //alert('stored word: '+storageItem);
+
+    var splitTheWord = storageItem.split(":");
+
+    dictionary.english.value  = splitTheWord[0];
+    dictionary.japanese.value = splitTheWord[1];
+    dictionary.spanish.value  = splitTheWord[2];
+    dictionary.french.value   = splitTheWord[3];
+    dictionary.italian.value  = splitTheWord[4];
+ }
+
+ function showFirstWordInLocalStorage() {
+    var selectedWord = wordList[0];
+/// alert('sfwinls word: '+selectedWord.value);
+
+    // get the word from local storage 
+    var storageItem = localStorage.getItem(selectedWord.value);
+/// alert('sfwinls stored word: '+storageItem);
+
+    var splitTheWord = storageItem.split(":");
+
+    dictionary.english.value  = splitTheWord[0];
+    dictionary.japanese.value = splitTheWord[1];
+    dictionary.spanish.value  = splitTheWord[2];
+    dictionary.french.value   = splitTheWord[3];
+    dictionary.italian.value  = splitTheWord[4];
+ }
+</script>
+</head>
+
+<body onLoad="populateDropDownList(); showFirstWordInLocalStorage()">
+  <h3>Our Multi-Lingual Dictionary</h3>
+  <form id="dictionary" onsubmit="return false;">
+  <form>
+   <fieldset>
+      <legend>Create a New Multi-Lingual Row</legend>
+      <label for="english">English:</label>
+      <input type="text" name="english" id="english" />
+      <label for="japanese">Japanese:</label>
+      <input type="text" name="japanese" id="japanese" />
+      <label for="spanish">Spanish:</label>
+      <input type="text" name="spanish" id="spanish" />
+      <label for="french">French:</label>
+      <input type="text" name="french" id="french" />
+      <label for="italian">Italian:</label>
+      <input type="text" name="italian" id="italian" />
+   </fieldset>
+
+   <fieldset>
+    <button id="add" onClick="addWord()">Add Row</button>
+    <button id="clearIF" onClick="clearFields()">Clear Row</button>
+    <button id="clearLS" onClick="clearLocalStorage()">Clear Storage</button>
+   </fieldset>
+
+   <fieldset>
+      <button id="label">Our Dictionary:</button>
+      <select id="wordList" onchange="showWordDetails()">
+      </select>
+   </fieldset>
+  </form>
+</body>
+</html>
+
+
